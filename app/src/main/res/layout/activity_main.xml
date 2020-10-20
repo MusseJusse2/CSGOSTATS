@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
+    android:background="#3C3E48"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonParse">
+
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_toRightOf="@+id/textViewName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/textViewName"
+                android:textSize="20sp"
+                android:textColor="@color/colorText"
+                android:layout_marginRight="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textViewStats"
+                android:layout_below="@+id/textViewName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorText"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/imageInferno"
+                android:layout_below="@+id/textViewStats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/textViewKD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageInferno"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="45dp"
+                android:textColor="@color/colorText"
+                android:visibility="invisible"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/textViewHS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageInferno"
+                android:layout_toRightOf="@+id/progressBarKD"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="45dp"
+                android:textColor="@color/colorText"
+                android:visibility="invisible"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/textViewAccuracy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progressBarKD"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="45dp"
+                android:textColor="@color/colorText"
+                android:visibility="invisible"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/textViewRoundWinRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progressBarHS"
+                android:layout_toRightOf="@+id/progressBarKD"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="45dp"
+                android:textColor="@color/colorText"
+                android:visibility="invisible"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/textViewWinRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progressBarAccuracy"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="45dp"
+                android:textColor="@color/colorText"
+                android:visibility="invisible"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/textViewAchievements"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progressBarRoundWin"
+                android:layout_toRightOf="@+id/progressBarAccuracy"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="45dp"
+                android:textColor="@color/colorText"
+                android:visibility="invisible"
+                android:textSize="10dp" />
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:layout_below="@+id/imageInferno"
+                android:id="@+id/progressBarKD"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                app:background_progressbar_color="#CA5151"
+                app:background_progressbar_width="5dp"
+                android:paddingBottom="100dp"
+                app:progressbar_color="#7DCD4E"
+                android:visibility="invisible"
+                app:progressbar_width="5dp" />
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:layout_below="@+id/imageInferno"
+                android:layout_toRightOf="@id/progressBarKD"
+                android:id="@+id/progressBarHS"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="16dp"
+                app:background_progressbar_color="#CA5151"
+                app:background_progressbar_width="5dp"
+                app:progressbar_color="#7DCD4E"
+                android:visibility="invisible"
+                app:progressbar_width="5dp" />
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:layout_below="@id/progressBarKD"
+                android:id="@+id/progressBarAccuracy"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                app:background_progressbar_color="#CA5151"
+                app:background_progressbar_width="5dp"
+                app:progressbar_color="#7DCD4E"
+                android:visibility="invisible"
+                app:progressbar_width="5dp" />
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:layout_below="@id/progressBarHS"
+                android:layout_toRightOf="@+id/progressBarAccuracy"
+                android:id="@+id/progressBarRoundWin"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="16dp"
+                app:background_progressbar_color="#CA5151"
+                app:background_progressbar_width="5dp"
+                app:progressbar_color="#7DCD4E"
+                android:visibility="invisible"
+                app:progressbar_width="5dp" />
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:layout_below="@id/progressBarAccuracy"
+                android:id="@+id/progressBarWinRate"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="6dp"
+                app:background_progressbar_color="#CA5151"
+                app:background_progressbar_width="5dp"
+                app:progressbar_color="#7DCD4E"
+                android:visibility="invisible"
+                app:progressbar_width="5dp" />
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:layout_below="@id/progressBarAccuracy"
+                android:layout_toRightOf="@id/progressBarWinRate"
+                android:id="@+id/progressBarAchievements"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:background_progressbar_color="#CA5151"
+                app:background_progressbar_width="5dp"
+                app:progressbar_color="#7DCD4E"
+                android:visibility="invisible"
+                app:progressbar_width="5dp" />
+
+            <TableLayout
+                android:id="@+id/table_weapons_full"
+                android:layout_below="@id/progressBarWinRate"
+                android:stretchColumns="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TableLayout>
+            <TableLayout
+                android:id="@+id/table_maps_full"
+                android:layout_below="@id/table_weapons_full"
+                android:stretchColumns="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TableLayout>
+            <TableLayout
+                android:id="@+id/table_weapons"
+                android:layout_below="@id/table_maps_full"
+                android:stretchColumns="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TableLayout>
+            <TableLayout
+                android:id="@+id/table_maps"
+                android:layout_below="@id/table_weapons"
+                android:stretchColumns="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TableLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/buttonParse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextInput"
+        android:text="REFRESH"
+        android:textColor="@color/colorText"
+        android:textColorHint="@color/colorText" />
+
+    <EditText
+        android:id="@+id/editTextInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="SteamID, CustomURL, Profile Link"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:textColor="@color/colorText"
+        android:textColorHint="@color/colorText" />
+</RelativeLayout>
