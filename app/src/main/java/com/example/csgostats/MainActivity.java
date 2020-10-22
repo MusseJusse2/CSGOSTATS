@@ -1,16 +1,11 @@
 package com.example.csgostats;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -19,12 +14,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,18 +35,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -61,14 +50,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 
 public class MainActivity extends AppCompatActivity implements ResultsCallback {
 
@@ -115,9 +100,9 @@ public class MainActivity extends AppCompatActivity implements ResultsCallback {
                     jsonParse();
                 } else {
                     taskFragment = new PlaceholderFragment();
-                    getSupportFragmentManager().beginTransaction().add(taskFragment, "MyFragment").commit();
-                    taskFragment.startTask();
-                    getSupportFragmentManager().beginTransaction().remove(taskFragment);
+                        getSupportFragmentManager().beginTransaction().add(taskFragment, "MyFragment").commit();
+                        taskFragment.startTask();
+                        getSupportFragmentManager().beginTransaction().remove(taskFragment);
                 }
             }
         });
@@ -156,9 +141,9 @@ public class MainActivity extends AppCompatActivity implements ResultsCallback {
                             calculateStats();
                             sortMaps();
 
-                            initWeaponsFullKills();
-                            //initWeaponsFullShots();
-                            //initWeaponsFullAccuracy();
+                            initWeaponsFullKills("Pistol");
+                            //initWeaponsFullShots("Rifle");
+                            //initWeaponsFullAccuracy("Rifle");
                             initMapsFullWins();
                             //initMapsFullRounds();
                             //initMapsFullWinRate();
@@ -168,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements ResultsCallback {
                             initMapsWins();
                             //initMapsRounds();
                             //initMapsWinRate();
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -735,158 +719,781 @@ public class MainActivity extends AppCompatActivity implements ResultsCallback {
         }
     }
 
-    public void initWeaponsFullKills() {
+    public void initWeaponsFullKills(String type) {
         Resources resources = getResources();
         int resourceId = 0;
         createWeaponFull();
         TableLayout stk = (TableLayout) findViewById(R.id.table_weapons_full);
         //Sorted by kills
-        for (String key : sortedKillMap.keySet()) {
-            TableRow tbrow = new TableRow(this);
-            resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
-            ImageView iv0 = new ImageView(this);
-            if (key.substring(12).contains("hkp2000")) {
-                resourceId = resources.getIdentifier("hkp2000_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("mp7")) {
-                resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("negev")) {
-                resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("ssg08")) {
-                resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("scar20")) {
-                resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("hegrenade")) {
-                resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("bizon")) {
-                resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+        if (type.matches("All")) {
+            for (String key : sortedKillMap.keySet()) {
+                TableRow tbrow = new TableRow(this);
+                resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                ImageView iv0 = new ImageView(this);
+                if (key.substring(12).contains("hkp2000")) {
+                    resourceId = resources.getIdentifier("hkp2000_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("mp7")) {
+                    resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("negev")) {
+                    resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("ssg08")) {
+                    resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("scar20")) {
+                    resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("hegrenade")) {
+                    resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("bizon")) {
+                    resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+                }
+                iv0.setImageResource(resourceId);
+                tbrow.addView(iv0);
+                TextView t1v = new TextView(this);
+                t1v.setText(key.substring(12).toUpperCase());
+                t1v.setTextColor(Color.WHITE);
+                t1v.setGravity(Gravity.CENTER);
+                tbrow.addView(t1v);
+                TextView t2v = new TextView(this);
+                t2v.setText(String.valueOf(sortedKillMap.get(key)));
+                t2v.setTextColor(Color.WHITE);
+                t2v.setGravity(Gravity.LEFT);
+                tbrow.addView(t2v);
+                TextView t3v = new TextView(this);
+                t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
+                t3v.setTextColor(Color.WHITE);
+                t3v.setGravity(Gravity.LEFT);
+                tbrow.addView(t3v);
+                TextView t4v = new TextView(this);
+                t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                t4v.setTextColor(Color.WHITE);
+                t4v.setGravity(Gravity.LEFT);
+                tbrow.addView(t4v);
+                stk.addView(tbrow);
             }
-            iv0.setImageResource(resourceId);
-            tbrow.addView(iv0);
-            TextView t1v = new TextView(this);
-            t1v.setText(key.substring(12).toUpperCase());
-            t1v.setTextColor(Color.WHITE);
-            t1v.setGravity(Gravity.CENTER);
-            tbrow.addView(t1v);
-            TextView t2v = new TextView(this);
-            t2v.setText(String.valueOf(sortedKillMap.get(key)));
-            t2v.setTextColor(Color.WHITE);
-            t2v.setGravity(Gravity.LEFT);
-            tbrow.addView(t2v);
-            TextView t3v = new TextView(this);
-            t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
-            t3v.setTextColor(Color.WHITE);
-            t3v.setGravity(Gravity.LEFT);
-            tbrow.addView(t3v);
-            TextView t4v = new TextView(this);
-            t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
-            t4v.setTextColor(Color.WHITE);
-            t4v.setGravity(Gravity.LEFT);
-            tbrow.addView(t4v);
-            stk.addView(tbrow);
-        }
-    }
-
-    public void initWeaponsFullShots() {
-        Resources resources = getResources();
-        int resourceId = 0;
-        createWeaponFull();
-        TableLayout stk = (TableLayout) findViewById(R.id.table_weapons_full);
-        //Sorted by kills
-        for (String key : sortedShotMap.keySet()) {
-            TableRow tbrow = new TableRow(this);
-            resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
-            ImageView iv0 = new ImageView(this);
-            if (key.substring(12).contains("hkp2000")) {
-                resourceId = resources.getIdentifier("hkp2000_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("mp7")) {
-                resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("negev")) {
-                resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("ssg08")) {
-                resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("scar20")) {
-                resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("hegrenade")) {
-                resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
-            } else if (key.substring(12).contains("bizon")) {
-                resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+        } else if (type.matches("Sniper")) {
+            for (String key : sortedKillMap.keySet()) {
+                if ((key.substring(12).matches("awp|ssg08|g3sg1|scar20"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("ssg08")) {
+                        resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
+                    } else if (key.substring(12).contains("scar20")) {
+                        resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get(key)));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
             }
-            iv0.setImageResource(resourceId);
-            tbrow.addView(iv0);
-            TextView t1v = new TextView(this);
-            t1v.setText(key.substring(12).toUpperCase());
-            t1v.setTextColor(Color.WHITE);
-            t1v.setGravity(Gravity.CENTER);
-            tbrow.addView(t1v);
-            TextView t2v = new TextView(this);
-            t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
-            t2v.setTextColor(Color.WHITE);
-            t2v.setGravity(Gravity.CENTER);
-            tbrow.addView(t2v);
-            TextView t3v = new TextView(this);
-            t3v.setText(String.valueOf(sortedShotMap.get(key)));
-            t3v.setTextColor(Color.WHITE);
-            t3v.setGravity(Gravity.CENTER);
-            tbrow.addView(t3v);
-            TextView t4v = new TextView(this);
-            t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
-            t4v.setTextColor(Color.WHITE);
-            t4v.setGravity(Gravity.CENTER);
-            tbrow.addView(t4v);
-            stk.addView(tbrow);
+        } else if (type.matches("Rifle")) {
+            for (String key : sortedKillMap.keySet()) {
+                if ((key.substring(12).matches("ak47|m4a1|famas|galilar|aug|sg556"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get(key)));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Pistol")) {
+            for (String key : sortedKillMap.keySet()) {
+                if ((key.substring(12).matches("hkp2000|p250|deagle|elite|fiveseven|tec9|glock"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("hkp2000")) {
+                        resourceId = resources.getIdentifier("hkp2000_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get(key)));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Heavy")) {
+            for (String key : sortedKillMap.keySet()) {
+                if ((key.substring(12).matches("nova|sawedoff|xm1014|mag7|negev|m249"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("negev")) {
+                        resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get(key)));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("SMG")) {
+            for (String key : sortedKillMap.keySet()) {
+                if ((key.substring(12).matches("mp7|mp9|mac10|bizon|ump45|p90"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("mp7")) {
+                        resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
+                    } else if (key.substring(12).contains("bizon")) {
+                        resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get(key)));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Other")) {
+            for (String key : sortedKillMap.keySet()) {
+                if (key.substring(12).matches("knife|decoy|molotov|taser|hegrenade")) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("hegrenade")) {
+                        resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get(key)));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(12))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.LEFT);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
         }
         stk.setVisibility(View.VISIBLE);
     }
 
-    public void initWeaponsFullAccuracy() {
+    public void initWeaponsFullShots(String type) {
         Resources resources = getResources();
         int resourceId = 0;
         createWeaponFull();
         TableLayout stk = (TableLayout) findViewById(R.id.table_weapons_full);
         //Sorted by kills
-        for (String key : sortedAccuracyMap.keySet()) {
-            TableRow tbrow = new TableRow(this);
-            resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
-            ImageView iv0 = new ImageView(this);
-            if (key.substring(9).contains("hkp2000")) {
-                resourceId = resources.getIdentifier("hkp2000_png", "drawable", getPackageName());
-            } else if (key.substring(9).contains("mp7")) {
-                resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
-            } else if (key.substring(9).contains("negev")) {
-                resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
-            } else if (key.substring(9).contains("ssg08")) {
-                resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
-            } else if (key.substring(9).contains("scar20")) {
-                resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
-            } else if (key.substring(9).contains("hegrenade")) {
-                resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
-            } else if (key.substring(9).contains("bizon")) {
-                resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+        if (type.matches("All")) {
+            for (String key : sortedShotMap.keySet()) {
+                TableRow tbrow = new TableRow(this);
+                resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                ImageView iv0 = new ImageView(this);
+                if (key.substring(12).contains("hkp2000")) {
+                    resourceId = resources.getIdentifier("hkp2000_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("mp7")) {
+                    resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("negev")) {
+                    resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("ssg08")) {
+                    resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("scar20")) {
+                    resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("hegrenade")) {
+                    resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
+                } else if (key.substring(12).contains("bizon")) {
+                    resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+                }
+                iv0.setImageResource(resourceId);
+                tbrow.addView(iv0);
+                TextView t1v = new TextView(this);
+                t1v.setText(key.substring(12).toUpperCase());
+                t1v.setTextColor(Color.WHITE);
+                t1v.setGravity(Gravity.CENTER);
+                tbrow.addView(t1v);
+                TextView t2v = new TextView(this);
+                t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
+                t2v.setTextColor(Color.WHITE);
+                t2v.setGravity(Gravity.CENTER);
+                tbrow.addView(t2v);
+                TextView t3v = new TextView(this);
+                t3v.setText(String.valueOf(sortedShotMap.get(key)));
+                t3v.setTextColor(Color.WHITE);
+                t3v.setGravity(Gravity.CENTER);
+                tbrow.addView(t3v);
+                TextView t4v = new TextView(this);
+                t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                t4v.setTextColor(Color.WHITE);
+                t4v.setGravity(Gravity.CENTER);
+                tbrow.addView(t4v);
+                stk.addView(tbrow);
             }
-            iv0.setImageResource(resourceId);
-            tbrow.addView(iv0);
-            TextView t1v = new TextView(this);
-            t1v.setText(key.substring(9).toUpperCase());
-            t1v.setTextColor(Color.WHITE);
-            t1v.setGravity(Gravity.CENTER);
-            tbrow.addView(t1v);
-            TextView t2v = new TextView(this);
-            t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
-            t2v.setTextColor(Color.WHITE);
-            t2v.setGravity(Gravity.CENTER);
-            tbrow.addView(t2v);
-            TextView t3v = new TextView(this);
-            t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
-            t3v.setTextColor(Color.WHITE);
-            t3v.setGravity(Gravity.CENTER);
-            tbrow.addView(t3v);
-            TextView t4v = new TextView(this);
-            t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
-            t4v.setTextColor(Color.WHITE);
-            t4v.setGravity(Gravity.CENTER);
-            tbrow.addView(t4v);
-            stk.addView(tbrow);
+        } else if (type.matches("Sniper")) {
+            for (String key : sortedShotMap.keySet()) {
+                if ((key.substring(12).matches("awp|ssg08|g3sg1|scar20"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("ssg08")) {
+                        resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
+                    } else if (key.substring(12).contains("scar20")) {
+                        resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get(key)));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Rifle")) {
+            for (String key : sortedShotMap.keySet()) {
+                if ((key.substring(12).matches("ak47|m4a1|famas|galilar|aug|sg556"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get(key)));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Pistol")) {
+            for (String key : sortedShotMap.keySet()) {
+                if ((key.substring(12).matches("hkp2000|p250|deagle|elite|fiveseven|tec9|glock"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("ssg08")) {
+                        resourceId = resources.getIdentifier("hkp2000", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get(key)));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Heavy")) {
+            for (String key : sortedShotMap.keySet()) {
+                if ((key.substring(12).matches("nova|sawedoff|xm1014|mag7|negev|m249"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("negev")) {
+                        resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get(key)));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("SMG")) {
+            for (String key : sortedShotMap.keySet()) {
+                if ((key.substring(12).matches("mp7|mp9|mac10|bizon|ump45|p90"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("mp7")) {
+                        resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
+                    } else if (key.substring(12).contains("bizon")) {
+                        resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get(key)));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Other")) {
+            for (String key : sortedShotMap.keySet()) {
+                if (key.substring(12).matches("knife|decoy|molotov|taser|hegrenade")) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(12), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(12).contains("hegrenade")) {
+                        resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(12).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(12))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get(key)));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get("accuracy_" + key.substring(12))) + "%");
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
         }
+        stk.setVisibility(View.VISIBLE);
+    }
+
+    public void initWeaponsFullAccuracy(String type) {
+        Resources resources = getResources();
+        int resourceId = 0;
+        createWeaponFull();
+        TableLayout stk = (TableLayout) findViewById(R.id.table_weapons_full);
+        //Sorted by kills
+        if (type.matches("All")) {
+            for (String key : sortedAccuracyMap.keySet()) {
+                TableRow tbrow = new TableRow(this);
+                resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
+                ImageView iv0 = new ImageView(this);
+                if (key.substring(9).contains("hkp2000")) {
+                    resourceId = resources.getIdentifier("hkp2000_png", "drawable", getPackageName());
+                } else if (key.substring(9).contains("mp7")) {
+                    resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
+                } else if (key.substring(9).contains("negev")) {
+                    resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
+                } else if (key.substring(9).contains("ssg08")) {
+                    resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
+                } else if (key.substring(9).contains("scar20")) {
+                    resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
+                } else if (key.substring(9).contains("hegrenade")) {
+                    resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
+                } else if (key.substring(9).contains("bizon")) {
+                    resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+                }
+                iv0.setImageResource(resourceId);
+                tbrow.addView(iv0);
+                TextView t1v = new TextView(this);
+                t1v.setText(key.substring(9).toUpperCase());
+                t1v.setTextColor(Color.WHITE);
+                t1v.setGravity(Gravity.CENTER);
+                tbrow.addView(t1v);
+                TextView t2v = new TextView(this);
+                t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
+                t2v.setTextColor(Color.WHITE);
+                t2v.setGravity(Gravity.CENTER);
+                tbrow.addView(t2v);
+                TextView t3v = new TextView(this);
+                t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
+                t3v.setTextColor(Color.WHITE);
+                t3v.setGravity(Gravity.CENTER);
+                tbrow.addView(t3v);
+                TextView t4v = new TextView(this);
+                t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
+                t4v.setTextColor(Color.WHITE);
+                t4v.setGravity(Gravity.CENTER);
+                tbrow.addView(t4v);
+                stk.addView(tbrow);
+            }
+        } else if (type.matches("Sniper")) {
+            for (String key : sortedAccuracyMap.keySet()) {
+                if ((key.substring(9).matches("awp|ssg08|g3sg1|scar20"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(9).contains("ssg08")) {
+                        resourceId = resources.getIdentifier("ssg08_png", "drawable", getPackageName());
+                    } else if (key.substring(9).contains("scar20")) {
+                        resourceId = resources.getIdentifier("scar20_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(9).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Rifle")) {
+            for (String key : sortedAccuracyMap.keySet()) {
+                if ((key.substring(9).matches("ak47|m4a1|famas|galilar|aug|sg556"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(9).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Pistol")) {
+            for (String key : sortedAccuracyMap.keySet()) {
+                if ((key.substring(9).matches("hkp2000|p250|deagle|elite|fiveseven|tec9|glock"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(9).contains("ssg08")) {
+                        resourceId = resources.getIdentifier("hkp2000", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(9).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Heavy")) {
+            for (String key : sortedAccuracyMap.keySet()) {
+                if ((key.substring(9).matches("nova|sawedoff|xm1014|mag7|negev|m249"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(9).contains("negev")) {
+                        resourceId = resources.getIdentifier("negev_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(9).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("SMG")) {
+            for (String key : sortedAccuracyMap.keySet()) {
+                if ((key.substring(9).matches("mp7|mp9|mac10|bizon|ump45|p90"))) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(9).contains("mp7")) {
+                        resourceId = resources.getIdentifier("mp7_png", "drawable", getPackageName());
+                    } else if (key.substring(9).contains("bizon")) {
+                        resourceId = resources.getIdentifier("bizon_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(9).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        } else if (type.matches("Other")) {
+            for (String key : sortedAccuracyMap.keySet()) {
+                if (key.substring(9).matches("knife|decoy|molotov|taser|hegrenade")) {
+                    TableRow tbrow = new TableRow(this);
+                    resourceId = resources.getIdentifier(key.substring(9), "drawable", getPackageName());
+                    ImageView iv0 = new ImageView(this);
+                    if (key.substring(9).contains("hegrenade")) {
+                        resourceId = resources.getIdentifier("hegrenade_png", "drawable", getPackageName());
+                    }
+                    iv0.setImageResource(resourceId);
+                    tbrow.addView(iv0);
+                    TextView t1v = new TextView(this);
+                    t1v.setText(key.substring(9).toUpperCase());
+                    t1v.setTextColor(Color.WHITE);
+                    t1v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t1v);
+                    TextView t2v = new TextView(this);
+                    t2v.setText(String.valueOf(sortedKillMap.get("total_kills_" + key.substring(9))));
+                    t2v.setTextColor(Color.WHITE);
+                    t2v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t2v);
+                    TextView t3v = new TextView(this);
+                    t3v.setText(String.valueOf(sortedShotMap.get("total_shots_" + key.substring(9))));
+                    t3v.setTextColor(Color.WHITE);
+                    t3v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t3v);
+                    TextView t4v = new TextView(this);
+                    t4v.setText(String.valueOf(sortedAccuracyMap.get(key) + "%"));
+                    t4v.setTextColor(Color.WHITE);
+                    t4v.setGravity(Gravity.CENTER);
+                    tbrow.addView(t4v);
+                    stk.addView(tbrow);
+                }
+            }
+        }
+        stk.setVisibility(View.VISIBLE);
     }
 
     public void initWeaponsKills() {
